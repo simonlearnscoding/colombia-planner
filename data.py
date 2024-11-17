@@ -120,12 +120,20 @@ isla_de_rosario = Destination(
     9,
     []
 )
+raquira = Destination(
+    "Ráquira",
+    1,
+    "A small town famous for its pottery and artisan crafts.",
+    6,
+    []
+)
 
 # Define connections
 bogota.connections = [
     (medellin, 50), (cartagena, 90), (coffee_region, 70),
-    (san_andres, 140), (leticia, 160),  (salento, 80),
-    (santa_marta, 100), (villa_de_leyva, 50), (popayan, 120), (cali, 100), (barichara, 60)
+    (san_andres, 140), (leticia, 160), (salento, 80),
+    (santa_marta, 100), (villa_de_leyva, 50), (popayan, 120),
+    (cali, 100), (barichara, 60), (raquira, 40)
 ]
 medellin.connections = [
     (bogota, 50), (cartagena, 80), (coffee_region, 40),
@@ -162,7 +170,7 @@ santa_marta.connections = [
     (tayrona, 20), (minca, 30)
 ]
 villa_de_leyva.connections = [
-    (bogota, 50), (barichara, 70)
+    (bogota, 50), (barichara, 70), (raquira, 20)
 ]
 popayan.connections = [
     (bogota, 120), (medellin, 90), (cali, 40), (coffee_region, 50)
@@ -176,9 +184,13 @@ barichara.connections = [
 isla_de_rosario.connections = [
     (cartagena, 30)
 ]
+raquira.connections = [
+    (villa_de_leyva, 20), (bogota, 40)
+]
 
 # List of all destinations
 destinations = [
     bogota, medellin, cartagena, tayrona, coffee_region, san_andres, leticia,
-    guatape, salento, minca, santa_marta, villa_de_leyva, popayan, cali, barichara, isla_de_rosario
+    guatape, salento, minca, santa_marta, villa_de_leyva, popayan, cali,
+    barichara, isla_de_rosario, raquira
 ]
