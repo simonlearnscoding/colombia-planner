@@ -4,7 +4,7 @@ class Destination:
         self.description = description
         self.estimated_time = estimated_time
         self.preference_points = preference_points
-        self.connections = connections  # List of tuples: (Destination, Price)
+        self.connections = connections  # List of tuples: (Destination, Price, TravelTime)
 
 
 # Define destinations
@@ -17,7 +17,7 @@ bogota = Destination(
 )
 medellin = Destination(
     "Medellín",
-    2,
+    1,
     "The City of Eternal Spring, famous for its innovation and vibrant culture.",
     8,
     []
@@ -31,7 +31,7 @@ cartagena = Destination(
 )
 tayrona = Destination(
     "Tayrona",
-    3,
+    1,
     "A national park offering breathtaking beaches and lush jungle.",
     7,
     []
@@ -80,7 +80,7 @@ minca = Destination(
 )
 santa_marta = Destination(
     "Santa Marta",
-    1,
+    3,
     "A coastal city near Tayrona, offering history and beach relaxation.",
     6,
     []
@@ -128,64 +128,64 @@ raquira = Destination(
     []
 )
 
-# Define connections
+# Define connections (Destination, Price, TravelTime in days)
 bogota.connections = [
-    (medellin, 50), (cartagena, 90), (coffee_region, 70),
-    (san_andres, 140), (leticia, 160), (salento, 80),
-    (santa_marta, 100), (villa_de_leyva, 50), (popayan, 120),
-    (cali, 100), (barichara, 60), (raquira, 40)
+    (medellin, 50, 1), (cartagena, 90, 1), (coffee_region, 70, 1),
+    (san_andres, 140, 2), (leticia, 160, 2), (salento, 80, 1),
+    (santa_marta, 100, 1), (villa_de_leyva, 50, 0.5), (popayan, 120, 1.5),
+    (cali, 100, 1), (barichara, 60, 1), (raquira, 40, 0.5)
 ]
 medellin.connections = [
-    (bogota, 50), (cartagena, 80), (coffee_region, 40),
-    (san_andres, 130), (leticia, 150), (guatape, 30), (salento, 60),
-    (santa_marta, 120), (popayan, 90), (cali, 70)
+    (bogota, 50, 1), (cartagena, 80, 1.5), (coffee_region, 40, 0.5),
+    (san_andres, 130, 2), (leticia, 150, 2), (guatape, 30, 0.5), (salento, 60, 1),
+    (santa_marta, 120, 2), (popayan, 90, 1.5), (cali, 70, 1)
 ]
 cartagena.connections = [
-    (bogota, 90), (medellin, 80), (san_andres, 100),
-    (santa_marta, 40), (isla_de_rosario, 30)
+    (bogota, 90, 1), (medellin, 80, 1.5), (san_andres, 100, 2),
+    (santa_marta, 40, 0.5), (isla_de_rosario, 30, 0.5)
 ]
 tayrona.connections = [
-    (santa_marta, 20)  # Only accessible from Santa Marta
+    (santa_marta, 20, 0.25)  # Only accessible from Santa Marta
 ]
 coffee_region.connections = [
-    (bogota, 70), (medellin, 40), (salento, 20), (popayan, 50)
+    (bogota, 70, 1), (medellin, 40, 0.5), (salento, 20, 0.5), (popayan, 50, 1)
 ]
 san_andres.connections = [
-    (bogota, 140), (cartagena, 100)
+    (bogota, 140, 2), (cartagena, 100, 2)
 ]
 leticia.connections = [
-    (bogota, 160), (medellin, 150)
+    (bogota, 160, 2), (medellin, 150, 2)
 ]
 guatape.connections = [
-    (medellin, 30), (bogota, 60)
+    (medellin, 30, 0.5), (bogota, 60, 1)
 ]
 salento.connections = [
-    (bogota, 80), (medellin, 60), (coffee_region, 20)
+    (bogota, 80, 1), (medellin, 60, 1), (coffee_region, 20, 0.5)
 ]
 minca.connections = [
-    (santa_marta, 30)  # Only accessible from Santa Marta
+    (santa_marta, 30, 0.5)  # Only accessible from Santa Marta
 ]
 santa_marta.connections = [
-    (bogota, 100), (medellin, 120), (cartagena, 40),
-    (tayrona, 20), (minca, 30)
+    (bogota, 100, 1), (medellin, 120, 2), (cartagena, 40, 0.5),
+    (tayrona, 20, 0.25), (minca, 30, 0.5)
 ]
 villa_de_leyva.connections = [
-    (bogota, 50), (barichara, 70), (raquira, 20)
+    (bogota, 50, 0.5), (barichara, 70, 1), (raquira, 20, 0.25)
 ]
 popayan.connections = [
-    (bogota, 120), (medellin, 90), (cali, 40), (coffee_region, 50)
+    (bogota, 120, 1.5), (medellin, 90, 1.5), (cali, 40, 0.5), (coffee_region, 50, 1)
 ]
 cali.connections = [
-    (bogota, 100), (medellin, 70), (popayan, 40)
+    (bogota, 100, 1), (medellin, 70, 1), (popayan, 40, 0.5)
 ]
 barichara.connections = [
-    (bogota, 60), (villa_de_leyva, 70)
+    (bogota, 60, 1), (villa_de_leyva, 70, 1)
 ]
 isla_de_rosario.connections = [
-    (cartagena, 30)
+    (cartagena, 30, 0.5)
 ]
 raquira.connections = [
-    (villa_de_leyva, 20), (bogota, 40)
+    (villa_de_leyva, 20, 0.25), (bogota, 40, 0.5)
 ]
 
 # List of all destinations

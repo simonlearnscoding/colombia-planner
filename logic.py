@@ -33,9 +33,11 @@ def get_user_preferences(destinations):
             except ValueError:
                 print("Invalid input. Please enter a number between 1 and 10.")
         print("\n")
+
+
 def evaluate_subset(args):
     """
-    Evaluate a subset of destinations for the best itinerary, including mandatory points.
+    Evaluate a subset of destinations for the best itinerary, including mandatory points and travel time.
 
     Args:
         args (tuple): A tuple containing:
@@ -45,7 +47,7 @@ def evaluate_subset(args):
             mandatory_points (list): List of mandatory destinations to include in the itinerary.
 
     Returns:
-        tuple: The best itinerary (list of Destination objects), total points, and total cost.
+        tuple: The best itinerary (list of Destination objects), total points, total cost, and total travel time.
     """
     subset, start_destination, days_available, mandatory_points = args
     best_itinerary = None
@@ -58,6 +60,7 @@ def evaluate_subset(args):
     for perm in permutations(full_subset):
         itinerary = [start_destination] + list(perm) + [start_destination]
         total_time = 0
+        total_travel_time = 0
         total_cost = 0
         total_points = 0
         feasible = True
@@ -65,16 +68,23 @@ def evaluate_subset(args):
         for i in range(len(itinerary) - 1):
             current = itinerary[i]
             next_dest = itinerary[i + 1]
-            # Find the travel cost to the next destination
-            travel_cost = next(
-                (price for dest, price in current.connections if dest == next_dest),
-                float("inf"),
+            # Find the travel cost and travel time to the next destination
+            connection = next(
+                (
+                    (price, travel_time)
+                    for dest, price, travel_time in current.connections
+                    if dest == next_dest
+                ),
+                None,
             )
-            if travel_cost == float("inf"):  # Invalid connection
+            if not connection:  # Invalid connection
                 feasible = False
                 break
 
+            travel_cost, travel_time = connection
             total_cost += travel_cost
+            total_travel_time += travel_time
+            total_time += travel_time  # Add travel time
             total_time += current.estimated_time  # Add time spent at the destination
 
             # Early return if the total time exceeds available days
@@ -82,7 +92,7 @@ def evaluate_subset(args):
                 feasible = False
                 break
 
-        # Add travel time for the last destination
+        # Add travel time for the last leg back to the start
         if feasible:
             total_time += itinerary[-2].estimated_time
 
@@ -99,7 +109,7 @@ def evaluate_subset(args):
                     min_cost = total_cost
                     best_itinerary = itinerary
 
-    return best_itinerary, max_points, min_cost
+    return best_itinerary, max_points, min_cost, total_travel_time
 
 
 def calculate_itinerary(
@@ -115,11 +125,12 @@ def calculate_itinerary(
         mandatory_points (list): List of mandatory destinations to include in the itinerary.
 
     Returns:
-        tuple: The best itinerary (list of Destination objects), total points, and total cost.
+        tuple: The best itinerary (list of Destination objects), total points, total cost, and total travel time.
     """
     best_itinerary = None
     max_points = 0
     min_cost = float("inf")
+    total_travel_time = 0
     subsets = [
         subset
         for subset_size in range(1, min(len(destinations), 7))  # Limit subset size
@@ -137,11 +148,16 @@ def calculate_itinerary(
             ],
         )
 
-    for itinerary, points, cost in results:
+    for itinerary, points, cost, travel_time in results:
         if points > max_points or (points == max_points and cost < min_cost):
-            best_itinerary, max_points, min_cost = itinerary, points, cost
+            best_itinerary, max_points, min_cost, total_travel_time = (
+                itinerary,
+                points,
+                cost,
+                travel_time,
+            )
 
-    return best_itinerary, max_points, min_cost
+    return best_itinerary, max_points, min_cost, total_travel_time
 
 
 def format_itinerary(itinerary, mandatory_points):
@@ -163,21 +179,26 @@ def format_itinerary(itinerary, mandatory_points):
         current = itinerary[i]
         next_dest = itinerary[i + 1]
 
-        # Find the travel cost to the next destination
-        travel_cost = next(
-            (price for dest, price in current.connections if dest == next_dest),
+        # Find the travel cost and travel time to the next destination
+        connection = next(
+            (
+                (price, travel_time)
+                for dest, price, travel_time in current.connections
+                if dest == next_dest
+            ),
             None,
         )
+        travel_cost, travel_time = connection if connection else (None, None)
 
         # Add transit information
-        output.append(f"{current.title} -> {next_dest.title}. ${travel_cost if travel_cost else 'N/A'}")
+        output.append(
+            f"{current.title} -> {next_dest.title}. ${travel_cost if travel_cost else 'N/A'}, Travel Time: {travel_time if travel_time else 'N/A'} days"
+        )
 
         # If it's not a transit-only destination, add details
         if next_dest not in mandatory_points:
             end_day = current_day + next_dest.estimated_time - 1
             output.append(f"Day {current_day} - Day {end_day}: {next_dest.title}")
-            output.append("-----")
-            output.append(f"{next_dest.description}")
             output.append("-----")
             current_day = end_day + 1
 
